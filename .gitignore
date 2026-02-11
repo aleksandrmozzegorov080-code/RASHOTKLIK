@@ -21,3 +21,6 @@ env/
 config.json
 server_data/config.json
 *.local
+
+# Скачанные резюме (личные)
+Rezume/*.htm
