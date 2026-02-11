@@ -30,7 +30,8 @@ git push -u origin main
 
 ### 3. Дальше
 
-Обновлять репозиторий на GitHub: `git add .` → `git commit -m "..."` → `git push`.
+- Обновлять репозиторий: `git add .` → `git commit -m "..."` → `git push origin main`.
+- **Релизы, ветки, несколько программистов:** см. [CONTRIBUTING.md](CONTRIBUTING.md) (как добавлять коллег, делать релизы и пуши по-программистски).
 
 ---
 
