@@ -9,15 +9,7 @@
 <body>
   <div class="container">
     <h1>Настройки</h1>
-    <label>Токен HH.ru (определяется автоматически) <input id="hh-token" type="password" placeholder="авто" autocomplete="off" readonly /></label>
-    <label>API-ключ VseLLM <input id="vsellm-key" type="password" placeholder="обязательно" /></label>
-    <label>Промпт аудита <textarea id="audit-prompt" rows="10"></textarea></label>
-    <div class="buttons" id="options-buttons">
-      <button id="btn-load-default-prompt" class="secondary">Загрузить промпт по умолчанию</button>
-      <button id="btn-save">Сохранить</button>
-      <button id="btn-test" class="secondary">Проверить подключение (VseLLM)</button>
-    </div>
-    <p class="options-version" aria-hidden="true">Кнопка «Проверить токен HH» — сразу под полем «Токен HH.ru».</p>
+    <p>Настройки хранятся в файле <code>server_data/config.json</code></p>
     <p id="options-status"></p>
   </div>
   <script src="options.js"></script>

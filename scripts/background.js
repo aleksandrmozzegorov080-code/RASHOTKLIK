@@ -2,7 +2,7 @@
 // apiClient встроен ниже (без importScripts), чтобы воркер гарантированно запускался в MV3.
 
 const VSELLM_BASE = 'https://api.vsellm.ru/v1';
-const MODEL = 'deepseek/deepseek-chat';
+let MODEL = 'deepseek/deepseek-v3.2';
 const PLACEHOLDER = 'RESUME_JSON';
 
 function fillPrompt(promptTemplate, resumeJson) {
@@ -12,6 +12,11 @@ function fillPrompt(promptTemplate, resumeJson) {
 
 function callDeepSeekAudit(resumeJson, promptTemplate, apiKey) {
   const content = fillPrompt(promptTemplate, resumeJson);
+  console.log('[AUDIT] Модель:', MODEL);
+  console.log('[AUDIT] Промпт длина:', promptTemplate.length, 'символов');
+  console.log('[AUDIT] Резюме тип:', typeof resumeJson);
+  console.log('[AUDIT] Итоговый content длина:', content.length, 'символов');
+  console.log('[AUDIT] Первые 200 символов:', content.substring(0, 200));
   const url = VSELLM_BASE + '/chat/completions';
   const body = {
     model: MODEL,
@@ -145,21 +150,34 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   if (msg.action === 'runAudit') {
-    getStorage([STORAGE_KEYS.lastResume, STORAGE_KEYS.vsellmApiKey, STORAGE_KEYS.auditPrompt])
-      .then((data) => {
-        const resume = data[STORAGE_KEYS.lastResume];
-        const apiKey = data[STORAGE_KEYS.vsellmApiKey];
-        const prompt = data[STORAGE_KEYS.auditPrompt];
-        if (!apiKey || !apiKey.trim()) {
-          sendResponse({ error: 'Укажите API-ключ VseLLM в настройках.' });
+    const resume = msg.resume;
+    console.log('[AUDIT] Получен запрос runAudit, resume:', resume ? 'есть' : 'НЕТ');
+    if (!resume) {
+      sendResponse({ error: 'Нет данных резюме. Откройте страницу резюме на hh.ru.' });
+      return true;
+    }
+
+    // Читаем config.json и промпт из server_data/
+    const configUrl = chrome.runtime.getURL('server_data/config.json');
+    const promptUrl = chrome.runtime.getURL('server_data/prompts/default-audit.txt');
+    console.log('[AUDIT] configUrl:', configUrl);
+    console.log('[AUDIT] promptUrl:', promptUrl);
+    
+    Promise.all([
+      fetch(configUrl).then(r => { console.log('[AUDIT] config status:', r.status); return r.json(); }),
+      fetch(promptUrl).then(r => { console.log('[AUDIT] prompt status:', r.status); return r.text(); }),
+    ])
+      .then(([config, prompt]) => {
+        console.log('[AUDIT] config загружен, ключ:', config.vsellm_api_key ? 'есть' : 'НЕТ', 'модель:', config.model);
+        console.log('[AUDIT] prompt загружен, длина:', prompt.length);
+        const apiKey = config.vsellm_api_key;
+        if (config.model) MODEL = config.model;
+        if (!apiKey || apiKey === 'ВАШ_КЛЮЧ_VSELLM_СЮДА' || !apiKey.trim()) {
+          sendResponse({ error: 'Укажите API-ключ в server_data/config.json' });
           return;
         }
         if (!prompt || !prompt.trim()) {
-          sendResponse({ error: 'Укажите промпт аудита в настройках.' });
-          return;
-        }
-        if (!resume) {
-          sendResponse({ error: 'Сначала получите резюме с HH.ru.' });
+          sendResponse({ error: 'Не найден промпт в server_data/prompts/default-audit.txt' });
           return;
         }
         return callDeepSeekAudit(resume, prompt, apiKey.trim())

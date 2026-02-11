@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Аудит резюме (RASHOTKLIK)",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Получение резюме с HH.ru, аудит через DeepSeek (VseLLM), сохранение результата локально.",
   "permissions": ["storage", "activeTab", "scripting", "downloads", "tabs"],
   "host_permissions": [
@@ -23,6 +23,6 @@
   ],
   "options_ui": { "page": "options/options.html" },
   "web_accessible_resources": [
-    { "resources": ["prompts/default-audit.txt"], "matches": ["<all_urls>"] }
+    { "resources": ["server_data/config.json", "server_data/prompts/default-audit.txt"], "matches": ["<all_urls>"] }
   ]
 }

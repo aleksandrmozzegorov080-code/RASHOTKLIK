@@ -19,4 +19,5 @@ env/
 
 # Секреты и конфиги с токенами
 config.json
+server_data/config.json
 *.local
