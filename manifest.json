@@ -3,12 +3,10 @@
   "name": "Аудит резюме (RASHOTKLIK)",
   "version": "1.4.0",
   "description": "Получение резюме с HH.ru, аудит через DeepSeek (VseLLM), сохранение результата локально.",
-  "permissions": ["storage", "activeTab", "scripting", "downloads", "tabs"],
+  "permissions": ["storage", "activeTab", "downloads", "tabs"],
   "host_permissions": [
     "https://*.hh.ru/*",
-    "https://api.hh.ru/*",
-    "https://api.vsellm.ru/*",
-    "https://vsellm.ru/*"
+    "https://api.vsellm.ru/*"
   ],
   "action": { "default_popup": "popup/popup.html" },
   "background": { 
